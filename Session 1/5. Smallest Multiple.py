@@ -32,6 +32,7 @@ for nonprime in nonprimes:
 
 print(f"Smallest number that can be divied with out a remainder from 1 to 20 is {number}")
 
-# O(n) time
+# O(n) time n is b - a
 # O(n) space
         
+
