@@ -13,7 +13,8 @@ print(f"The sum of all the multiples of 3 or 5 below the {limit} is \"{ans}\"")
 
 
 #the range and the sum function are both O(n) for time complesity
-#O(n) time complesity
+#O(n) time complexity
 
-#O(n) space complesity
+#O(n) space complexity
+
 
