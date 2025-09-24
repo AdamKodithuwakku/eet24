@@ -22,4 +22,5 @@ while current < limit:
 print(f"Sum of all the primes that are less that {limit} if \"{sumprime}\"")
 
 # O(n*/n) time
-# O(1) space
+# O(sqrtn) space
+
