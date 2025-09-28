@@ -18,7 +18,7 @@ def timer(label: str) -> Iterator[None]:
         yield
     finally:
         end = time.time()
-        print(f"{label} {end-start} ms")
+        logging.info(f"{label} {end-start} ms")
 
 @contextmanager
 def suppress_and_log(*exc_types: type[BaseException]) -> Iterator[None]:
@@ -34,6 +34,6 @@ def suppress_and_log(*exc_types: type[BaseException]) -> Iterator[None]:
     try:
         yield
     except exc_types as e:
-        logging.exception(f"An Exception Occured at {time.time()}", e)
+        logging.exception(str(e))
     finally:
         pass

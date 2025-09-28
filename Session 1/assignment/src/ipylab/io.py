@@ -1,25 +1,32 @@
 from pathlib import Path
+import pandas as pd
 import csv
+import os
 import logging
 from typing import Iterable, Sequence
 
 def load_signal_csv(path: Path) -> list[float]:
     """
     Load a single-column CSV of floats into a list.
-    TODO:
-      - Validate that path exists and is a file; else raise FileNotFoundError
-      - Read rows; parse as float; collect into list
-      - Use try/except to catch ValueError and log it (then re-raise)
     """
     
-    return []
+    if not path.exists():
+        raise FileNotFoundError("Could not find file specified")
+    
+    try:
+        data = pd.read_csv(path, header=None, dtype={0: float})
+    except:
+        raise ValueError(f"INVALID inputs in {path}.")
+    return data
 
 def save_features_csv(path: Path, rows: Iterable[Sequence[float]]) -> None:
     """
     Save a CSV with header: rms,zero_crossings,peak_to_peak,mad
-    TODO:
-      - Ensure parent dir exists (mkdir parents=True, exist_ok=True)
-      - Write header and rows via csv.writer
     """
-    # TODO: implement
-    pass
+    path.parent.mkdir(parents=True, exist_ok=True)
+    
+    with open(path, 'w', newline='') as datafile:
+        writer = csv.writer()
+        writer.writerow(["RMS", "0 Crossings", "Peak to Peak", "Mean Abs Diff"])
+        writer.writerows(rows)
+

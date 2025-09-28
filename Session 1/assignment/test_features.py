@@ -10,5 +10,3 @@ def test_feature_vector_simple():
     assert p2p == 2.0
     assert mad > 0
 
-    
-test_feature_vector_simple()
