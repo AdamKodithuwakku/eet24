@@ -1,5 +1,5 @@
 import logging, re
-from ipylab.context import timer, suppress_and_log
+from .src.ipylab.context import timer, suppress_and_log
 
 def test_timer_runs_and_logs(caplog):
     caplog.set_level(logging.INFO)

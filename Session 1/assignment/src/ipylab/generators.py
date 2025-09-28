@@ -6,31 +6,54 @@ T = TypeVar("T", int, float)
 
 def chunks(iterable: Iterable[T], size: int) -> Iterator[list[T]]:
     """
-    Yield lists of length `size` from `iterable`. Last chunk may be shorter.
-    TODO:
-      - Accumulate items into a buffer
-      - Yield buffer when size reached; clear and continue
+    Yield lists of length `size` from `iterable`.
     """
-    # TODO: implement
-    return iter(())
+    chunk = []
+
+    for item in iterable:
+        chunk.append(item)
+        if len(chunk) == size:
+            yield chunk
+            chunk = []
+    
+    #Last chunk may be shorter.
+    if chunk:
+        yield chunk
+        
+
 
 def moving_average(window: int):
     """
     Stateful GENERATOR that yields the moving average each time a new value is sent.
-    Usage:
-        gen = moving_average(5); next(gen)
-        out = gen.send(3.0)  # returns current average
-    TODO:
-      - Keep a deque(maxlen=window)
-      - On each .send(x): append x and yield average (sum/len)
     """
-    # TODO: implement
-    yield None
+    history = deque(maxlen=window)
+    total = float(0)
+    count = float(0)
+
+    while True: # This is never getting stuck on this; because we are yeilding every time the fucn is called
+        value = yield total / count if count > 0 else 0.0
+
+        if value is None: continue # without this gives an error ???
+
+        if(len(history) >= window):
+            history.popleft()
+
+        history.append(window)
+        total += value
+        count = len(history)
+
 
 def moving_median(window: int):
     """
     Stateful GENERATOR that yields the moving median each time a new value is sent.
-    TODO: mirror moving_average but compute statistics.median over the deque.
     """
-    # TODO: implement
-    yield None
+    history = Deque(maxlen=window)
+
+    while True:       
+        value = yield median(sorted(history)) if history else 0.0
+        if value is None: 
+            continue 
+
+        if(len(history) >= window):
+            history.popleft()
+        history.append(value)

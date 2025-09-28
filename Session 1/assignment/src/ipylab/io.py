@@ -11,7 +11,7 @@ def load_signal_csv(path: Path) -> list[float]:
       - Read rows; parse as float; collect into list
       - Use try/except to catch ValueError and log it (then re-raise)
     """
-    # TODO: implement
+    
     return []
 
 def save_features_csv(path: Path, rows: Iterable[Sequence[float]]) -> None:

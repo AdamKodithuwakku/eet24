@@ -5,17 +5,16 @@ import math
 def python_rms(seq: Sequence[float]) -> float:
     """
     Pure-Python RMS implementation.
-    TODO:
-      - sum of squares / len, then sqrt (use math.sqrt)
     """
-    # TODO: implement
-    return 0.0
+    sqsum = 0.0
+    for item in seq:
+        sqsum += item * item
+
+
+    return math.sqrt(sqsum/len(seq))
 
 def numpy_rms(arr: np.ndarray) -> float:
     """
     NumPy-vectorized RMS implementation.
-    TODO:
-      - Use np.mean and vectorized operations; return float
     """
-    # TODO: implement
-    return 0.0
+    return np.sqrt(np.mean(np.square(arr)))

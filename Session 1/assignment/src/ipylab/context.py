@@ -7,24 +7,33 @@ from typing import Iterator
 def timer(label: str) -> Iterator[None]:
     """
     Context manager that logs how long the block took (in ms).
-    TODO:
-      - Record start time
-      - Yield control
-      - On exit, compute elapsed ms and log with INFO level using logging.info
+    
+    Args:
+      label (str): Timer Message
+    Returns:
+      Iterator
     """
-    # TODO: implement
-    yield
+    start = time.time()
+    try:
+        yield
+    finally:
+        end = time.time()
+        print(f"{label} {end-start} ms")
 
 @contextmanager
 def suppress_and_log(*exc_types: type[BaseException]) -> Iterator[None]:
     """
     Context manager that suppresses given exception types and logs the exception.
-    Example:
-        with suppress_and_log(ValueError):
-            int("not int")  # won't crash; logs the error
-    TODO:
-      - Wrap the body in try/except for the given exc_types
-      - On exception, log with logging.exception and do NOT re-raise
+    
+    Args:
+      exc_types: type[BaseException]
+    
+    Returns:
+      Iterator
     """
-    # TODO: implement
-    yield
+    try:
+        yield
+    except exc_types as e:
+        logging.exception(f"An Exception Occured at {time.time()}", e)
+    finally:
+        pass

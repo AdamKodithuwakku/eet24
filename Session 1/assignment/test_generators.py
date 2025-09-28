@@ -1,4 +1,4 @@
-from ipylab.generators import chunks, moving_average, moving_median
+from src.ipylab.generators import chunks, moving_average, moving_median
 
 def test_chunks_basic():
     data = [1,2,3,4,5]
@@ -14,5 +14,9 @@ def test_moving_average_and_median():
         avgs.append(avg.send(x))
         meds.append(med.send(x))
     assert avgs[:3] == [1.0, 5.5, 4.666666666666667]
+    print(meds)
     assert meds[:3] == [1, 5.5, 3]
     assert isinstance(meds[-1], (int, float))
+
+test_chunks_basic()
+test_moving_average_and_median()
