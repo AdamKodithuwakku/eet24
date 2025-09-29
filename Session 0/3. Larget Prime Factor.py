@@ -4,7 +4,7 @@
 
 def isprime(number):
         if number <= 0:
-                return False;
+                return False
         if number <= 3:
                 return True
 
