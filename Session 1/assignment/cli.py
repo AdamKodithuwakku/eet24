@@ -81,11 +81,11 @@ def tricommand(inp: Path = typer.Option(Path("data/signal.csv"), help="Input Sin
     
     pairwisediff = [data[0]]+[b-a for a, b in itertools.pairwise(data)]
     
-    tridata = np.array([pairwisediff, rollingsum, rollingmul])
+    tridata = np.array([rollingsum, rollingmul, pairwisediff])
     
     with open(out, "w", newline="") as datafile:
         csvwrite = csv.writer(datafile)
-        csvwrite.writerow(["Pairwise Difference", "Rolling Sum", "Rolling multiplication"])
+        csvwrite.writerow(["Rolling Sum", "Rolling multiplication","Pairwise Difference"])
         csvwrite.writerows(tridata.T)
     
 
