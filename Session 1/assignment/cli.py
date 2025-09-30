@@ -6,6 +6,9 @@ import csv
 import itertools
 import operator
 import functools
+import time 
+
+from dataclasses import dataclass
 
 from src.ipylab.context import timer
 from src.ipylab.io import load_signal_csv, save_features_csv
@@ -17,46 +20,94 @@ from src.ipylab.decorators import timed
 
 app = typer.Typer(help="Intermediate Python Lab CLI")
 
+@dataclass(slots=True)
+class SlotedDataClass:
+    x: int
+    y: int
 
-@timed(threshold_ms=0.01)
+@dataclass
+class RegularDataClass:
+    x: int
+    y: int
+
 @app.command()
-def sleepy():
-    print("Start")
+def rolling_sum(inp: Path = typer.Option(Path("data/signal.csv"), help="Input Singal Data"), out: Path = typer.Option(Path("data/rolling.csv"), help="Output CSV path")):
+    """
+    Create the Rolling sum for the given input fiel
+    """
+    data = load_signal_csv(inp)
+    rolling_sum = np.array(itertools.accumulate(data)).reshape([-1, 1])
+    
+    with open(out, "w", newline="") as datafile:
+        csvwrite = csv.writer(datafile)
+        csvwrite.writerow("Rolling Sum")
+        csvwrite.writerows(rolling_sum)
 
-
-@timed(threshold_ms=0.01)
-@functools.lru_cache
 @app.command()
-def expensive_fun():
+def rolling_mul(inp: Path = typer.Option(Path("data/signal.csv"), help="Input Singal Data"), out: Path = typer.Option(Path("data/rollingmul.csv"), help="Output CSV path")):
+    """
+    Calculate the Rolling Multiplication for the given input file
+    """
+    data = load_signal_csv(inp)
+    rolling_mul = np.array(itertools.accumulate(data)).reshape([-1, 1])
+    
+    with open(out, "w", newline="") as datafile:
+        csvwrite = csv.writer(datafile)
+        csvwrite.writerow("Rolling mul")
+        csvwrite.writerows(rolling_mul)
+
+@app.command()
+def pairwise(inp: Path = typer.Option(Path("data/signal.csv"), help="Input Singal Data"), out: Path = typer.Option(Path("data/pairwise.csv"), help="Output CSV path")):
+    """
+    Calculate the Pair wise for the given input file
+    """
+    data = load_signal_csv(inp)
+    pairwise_diff = np.array([b-a for a, b in itertools.pairwise(data)]).reshape([-1,1])
+    
+    with open(out, "w", newline="") as datafile:
+        csvwrite = csv.writer(datafile)
+        csvwrite.writerow("Pairwise Difference")
+        csvwrite.writerows(pairwise_diff)
+
+@app.command()
+def tricommand(inp: Path = typer.Option(Path("data/signal.csv"), help="Input Singal Data"), out: Path = typer.Option(Path("data/tri.csv"), help="Output CSV path")):
+    """
+    Create the Rolling sum for the given input fiel
+    """
+    data = load_signal_csv(inp)
+    
+    rollingsum = list(itertools.accumulate(data))
+    rollingmul = list(itertools.accumulate(data, operator.mul))
+    
+    pairwisediff = [data[0]]+[b-a for a, b in itertools.pairwise(data)]
+    
+    tridata = np.array([pairwisediff, rollingsum, rollingmul])
+    
+    with open(out, "w", newline="") as datafile:
+        csvwrite = csv.writer(datafile)
+        csvwrite.writerow(["Pairwise Difference", "Rolling Sum", "Rolling multiplication"])
+        csvwrite.writerows(tridata.T)
+    
+
+
+
+@app.command() ##### This decorator needs to be on top; others
+@timed(threshold_ms=1)
+@functools.lru_cache(maxsize=None) 
+def sleepy(n: int = 5):
     """
         Expensive Function with Chaching.
     """
+    time.sleep(1)
+    return n*2
 
-    inp = Path("data/signal.csv")
-    data = load_signal_csv(inp)
-
-    rolling_sum = itertools.accumulate(data)
-    pairwise_diff = [b-a for a, b in itertools.pairwise(data)]
-    rolling_mul = itertools.accumulate(data, operator.mul)
+@app.command()
+def sleepytwo(n: int = 5):
+    sleepy(n) 
+    sleepy(n) # second files is calcualted from cache
 
 
-    my_rolling_sum = []
-    for a in data:
-        if my_rolling_sum:
-            my_rolling_sum.append(my_rolling_sum[-1] + a)
-        else:
-            my_rolling_sum.append(a)
-    
-    my_pairwise_diff = []
-    last = None
-    for a in data:
-        if not last:
-            last = a
-            continue
-        my_pairwise_diff.append(a - last)
-        last = a
-    
-    print(rolling_sum)
+
 
 
 @app.command()

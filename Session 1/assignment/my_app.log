@@ -1,0 +1,7 @@
+WARNING:src.ipylab.decorators:SLOW: sleepy took 0.18 ms
+WARNING:src.ipylab.decorators:SLOW: expensive_fun took 3.60 ms
+WARNING:src.ipylab.decorators:SLOW: expensive_fun took 3.63 ms
+WARNING:src.ipylab.decorators:SLOW: sleepy took 5000.45 ms
+WARNING:src.ipylab.decorators:SLOW: sleepy took 5000.43 ms
+WARNING:src.ipylab.decorators:SLOW: sleepy took 1000.49 ms
+INFO:src.ipylab.decorators:sleepy took 0.00 ms
