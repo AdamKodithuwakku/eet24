@@ -38,6 +38,6 @@ def save_features_csv(path: Path, rows: Iterable[Sequence[float]]) -> None:
     
     with open(path, 'w', newline='') as datafile:
         writer = csv.writer(datafile)
-        writer.writerow(["RMS", "0 Crossings", "Peak to Peak", "Mean Abs Diff"])
+        writer.writerow(["rms", "zero_crossings", "peak_to_peak", "mad"])
         writer.writerows(rows)
 
