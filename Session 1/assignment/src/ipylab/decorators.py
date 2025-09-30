@@ -8,10 +8,6 @@ def timed(threshold_ms: Optional[float] = None) -> Callable[[Callable[P, T]], Ca
     """
     Decorator that logs runtime; if threshold_ms is set and runtime exceeds it,
     logs a WARNING, else INFO.
-    TODO:
-      - Use functools.wraps
-      - Measure with time.perf_counter
-      - Log "SLOW: {fn.__name__} took {ms:.2f} ms" when exceeding threshold
     """
     def decorate(fn: Callable[P, T]) -> Callable[P, T]:
         @functools.wraps(fn)
@@ -19,12 +15,17 @@ def timed(threshold_ms: Optional[float] = None) -> Callable[[Callable[P, T]], Ca
             start_time = time.perf_counter()
             result = fn(*args, **kwargs)
             end_time = time.perf_counter()
-            elapsed_time_ms = (end_time - start_time) * 1000
+            elapsed_time_sec = end_time - start_time
+            elapsed_time_ms = elapsed_time_sec * 1000
+            print(elapsed_time_ms)
 
             if threshold_ms is not None and elapsed_time_ms > threshold_ms:
-                logging.warning(f"SLOW: {fn.__name__} took {elapsed_time_ms:.2f} ms")
+                log_message = f"SLOW: {fn.__name__} took {elapsed_time_ms:.2f} ms"
+                logging.getLogger(__name__).warning(log_message)
             else:
-                logging.info(f"{fn.__name__} took {elapsed_time_ms:.2f} ms")
+                log_message = f"{fn.__name__} took {elapsed_time_ms:.2f} ms"
+                logging.getLogger(__name__).info(log_message)
+
             return result
         return wrapper
     return decorate

@@ -1,7 +1,7 @@
 import logging, time
 from src.ipylab.decorators import timed
 
-def test_timed_decorator_threshold_logs_warning(caplog):#TODO
+def test_timed_decorator_threshold_logs_warning(caplog):
     caplog.set_level(logging.WARNING)
     @timed(threshold_ms=0.01)
     def sleepy():

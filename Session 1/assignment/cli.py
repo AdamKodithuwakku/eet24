@@ -3,6 +3,9 @@ import typer, logging
 from pathlib import Path
 import numpy as np
 import csv
+import itertools
+import operator
+import functools
 
 from src.ipylab.context import timer
 from src.ipylab.io import load_signal_csv, save_features_csv
@@ -10,8 +13,51 @@ from src.ipylab.features import feature_vector
 from src.ipylab.vectorize import python_rms, numpy_rms
 from src.ipylab.generators import chunks
 from src.ipylab.config import LabConfig
+from src.ipylab.decorators import timed
 
 app = typer.Typer(help="Intermediate Python Lab CLI")
+
+
+@timed(threshold_ms=0.01)
+@app.command()
+def sleepy():
+    print("Start")
+
+
+@timed(threshold_ms=0.01)
+@functools.lru_cache
+@app.command()
+def expensive_fun():
+    """
+        Expensive Function with Chaching.
+    """
+
+    inp = Path("data/signal.csv")
+    data = load_signal_csv(inp)
+
+    rolling_sum = itertools.accumulate(data)
+    pairwise_diff = [b-a for a, b in itertools.pairwise(data)]
+    rolling_mul = itertools.accumulate(data, operator.mul)
+
+
+    my_rolling_sum = []
+    for a in data:
+        if my_rolling_sum:
+            my_rolling_sum.append(my_rolling_sum[-1] + a)
+        else:
+            my_rolling_sum.append(a)
+    
+    my_pairwise_diff = []
+    last = None
+    for a in data:
+        if not last:
+            last = a
+            continue
+        my_pairwise_diff.append(a - last)
+        last = a
+    
+    print(rolling_sum)
+
 
 @app.command()
 def generate_data(out: Path = typer.Option(Path("data/signal.csv"), help="Output CSV path"), n: int = 4000, noise: float = 0.15):
@@ -53,7 +99,6 @@ def run_pipeline(inp: Path = Path("data/signal.csv"), out: Path = Path("data/fea
 
     save_features_csv(out, features)
 
-
 @app.command()
 def profile():
     """
@@ -67,6 +112,6 @@ def profile():
         numpy_rms(np.array(data))
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(filename='my_app.log', level=logging.INFO)
     app()
     
