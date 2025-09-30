@@ -13,7 +13,6 @@ def timed(threshold_ms: Optional[float] = None) -> Callable[[Callable[P, T]], Ca
       - Measure with time.perf_counter
       - Log "SLOW: {fn.__name__} took {ms:.2f} ms" when exceeding threshold
     """
-    # TODO: used ai
     def decorate(fn: Callable[P, T]) -> Callable[P, T]:
         @functools.wraps(fn)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
