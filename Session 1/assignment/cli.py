@@ -2,12 +2,14 @@
 import typer, logging
 from pathlib import Path
 import numpy as np
-from .context import timer
-from .io import load_signal_csv, save_features_csv
-from .features import feature_vector
-from .vectorize import python_rms, numpy_rms
-from .generators import chunks
 import csv
+
+from src.ipylab.context import timer
+from src.ipylab.io import load_signal_csv, save_features_csv
+from src.ipylab.features import feature_vector
+from src.ipylab.vectorize import python_rms, numpy_rms
+from src.ipylab.generators import chunks
+from src.ipylab.config import LabConfig
 
 app = typer.Typer(help="Intermediate Python Lab CLI")
 
@@ -16,27 +18,40 @@ def generate_data(out: Path = typer.Option(Path("data/signal.csv"), help="Output
     """
     Generate synthetic signal data (sine + square mixture) and save to CSV.
     """
-    timeT = np.linspace(0, 100, n)
-    sine_wave = np.sin(2*np.pi*timeT)
-    square_wave = np.square(2*np.pi*timeT)
-    signal = sine_wave + square_wave
-    noise = np.random(0, noise, n)
-    noicy_signal = noise+signal
 
-    with open(out, "w") as datafile:
+    labdata = LabConfig()
+
+    time_elapsed = np.linspace(0, labdata.duration_s, n)
+    
+    sine_wave = np.sin(time_elapsed)
+    square_wave = np.square(time_elapsed)
+
+    pure_signal = sine_wave + square_wave
+    noise_variation = np.random.normal(noise, labdata.noise_std, [n])
+    noicy_signal = noise_variation + pure_signal
+
+    noicy_signal = noicy_signal.reshape(-1, 1)
+
+    with open(out, "w", newline="") as datafile:
         writer = csv.writer(datafile)
+        writer.writerow(["Signal"])
         writer.writerows(noicy_signal)
+
 
 @app.command()
 def run_pipeline(inp: Path = Path("data/signal.csv"), out: Path = Path("data/features.csv"), chunk: int = 256):
     """
     Stream the input CSV in chunks, compute features per chunk, and save to CSV.
     """
-    data = load_signal_csv(inp.absolute)
+    data = load_signal_csv(inp)
     pychunks = chunks(data, chunk)
-    features = feature_vector(pychunks)
+    
+    features = []
+    for chunk in pychunks:
+        feature = feature_vector(np.array(chunk))
+        features.append(feature)
 
-    save_features_csv(features, out)
+    save_features_csv(out, features)
 
 
 @app.command()
