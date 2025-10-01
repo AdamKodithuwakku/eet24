@@ -1,11 +1,11 @@
 py -m pytest -q <br>
 python -m pytest -q <br>
 pytest<br>
-.......                                                                                                                                                                                                             [100%]
+.......<br>                                                                                                                                                                                                             [100%]
 7 passed in 0.17s.
 <br><br>
-cli
-........
+cli<br>
+........<br>
 rolling-mul, pairwise-diff, rooling-sum, tricommand -> calculate the data for the given input file.<br><br>
 
 sleepy -> intentially expensive function; sleep(1).
