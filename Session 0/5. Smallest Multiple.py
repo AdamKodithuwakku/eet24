@@ -29,6 +29,8 @@ for nonprime in nonprimes:
                         nonprime //= prime
                         number *= prime
 
+# lcm (a, gcd(a, b)) better
+
 
 print(f"Smallest number that can be divied with out a remainder from 1 to 20 is {number}")
 
